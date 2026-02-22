@@ -1,0 +1,30 @@
+[
+  {
+    "id": "std-001",
+    "name": "Aarav Sharma",
+    "rollNumber": 12,
+    "class": "10-A",
+    "marks": { "math": 85, "science": 78, "english": 90 }
+  },
+  {
+    "id": "std-002",
+    "name": "Sita Karki",
+    "rollNumber": 7,
+    "class": "10-A",
+    "marks": { "math": 92, "science": 88, "english": 81 }
+  },
+  {
+    "id": "std-003",
+    "name": "Ramesh Thapa",
+    "rollNumber": 19,
+    "class": "10-B",
+    "marks": { "math": 70, "science": 65, "english": 74 }
+  },
+  {
+    "id": "std-004",
+    "name": "Nisha Adhikari",
+    "rollNumber": 3,
+    "class": "10-B",
+    "marks": { "math": 88, "science": 91, "english": 86 }
+  }
+]
