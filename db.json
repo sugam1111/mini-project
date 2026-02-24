@@ -1,0 +1,341 @@
+{
+  "reports": [
+    {
+      "id": "rpt-001",
+      "title": "Mid-Term Report Card",
+      "createdBy": "Admin",
+      "createdAt": "2025-01-10T08:30:00Z",
+      "status": "Published",
+      "remarks": "Good overall performance, needs improvement in Science.",
+      "student": {
+        "id": "std-001",
+        "name": "Aarav Sharma",
+        "rollNumber": 12,
+        "class": "10-A",
+        "marks": { "math": 85, "science": 78, "english": 90 }
+      }
+    },
+    {
+      "id": "rpt-002",
+      "title": "Final Report Card",
+      "createdBy": "Teacher",
+      "createdAt": "2025-02-15T11:45:00Z",
+      "status": "Draft",
+      "remarks": "Excellent improvement compared to mid-term.",
+      "student": {
+        "id": "std-002",
+        "name": "Sita Karki",
+        "rollNumber": 7,
+        "class": "10-A",
+        "marks": { "math": 92, "science": 88, "english": 81 }
+      }
+    },
+    {
+      "id": "rpt-003",
+      "title": "Quarterly Assessment",
+      "createdBy": "Admin",
+      "createdAt": "2025-03-05T09:20:00Z",
+      "status": "Published",
+      "remarks": "Strong in Mathematics.",
+      "student": {
+        "id": "std-003",
+        "name": "Rohan Patel",
+        "rollNumber": 3,
+        "class": "10-A",
+        "marks": { "math": 95, "science": 82, "english": 76 }
+      }
+    },
+    {
+      "id": "rpt-004",
+      "title": "Progress Report",
+      "createdBy": "Teacher",
+      "createdAt": "2025-03-12T10:00:00Z",
+      "status": "Published",
+      "remarks": "Needs improvement in English.",
+      "student": {
+        "id": "std-004",
+        "name": "Anjali Singh",
+        "rollNumber": 15,
+        "class": "10-B",
+        "marks": { "math": 74, "science": 80, "english": 65 }
+      }
+    },
+    {
+      "id": "rpt-005",
+      "title": "Monthly Evaluation",
+      "createdBy": "Admin",
+      "createdAt": "2025-03-20T08:15:00Z",
+      "status": "Draft",
+      "remarks": "Consistent performance.",
+      "student": {
+        "id": "std-005",
+        "name": "Kiran Thapa",
+        "rollNumber": 9,
+        "class": "10-B",
+        "marks": { "math": 88, "science": 84, "english": 79 }
+      }
+    },
+    {
+      "id": "rpt-006",
+      "title": "Half-Yearly Report",
+      "createdBy": "Teacher",
+      "createdAt": "2025-04-01T07:30:00Z",
+      "status": "Published",
+      "remarks": "Excellent in Science.",
+      "student": {
+        "id": "std-006",
+        "name": "Meera Joshi",
+        "rollNumber": 18,
+        "class": "10-C",
+        "marks": { "math": 81, "science": 94, "english": 87 }
+      }
+    },
+    {
+      "id": "rpt-007",
+      "title": "Academic Review",
+      "createdBy": "Admin",
+      "createdAt": "2025-04-08T12:00:00Z",
+      "status": "Published",
+      "remarks": "Balanced academic growth.",
+      "student": {
+        "id": "std-007",
+        "name": "Rahul Das",
+        "rollNumber": 5,
+        "class": "10-C",
+        "marks": { "math": 78, "science": 75, "english": 80 }
+      }
+    },
+    {
+      "id": "rpt-008",
+      "title": "Semester Report",
+      "createdBy": "Teacher",
+      "createdAt": "2025-04-18T09:45:00Z",
+      "status": "Draft",
+      "remarks": "Needs more focus on assignments.",
+      "student": {
+        "id": "std-008",
+        "name": "Priya Rai",
+        "rollNumber": 11,
+        "class": "10-A",
+        "marks": { "math": 69, "science": 73, "english": 71 }
+      }
+    },
+    {
+      "id": "rpt-009",
+      "title": "Special Evaluation",
+      "createdBy": "Admin",
+      "createdAt": "2025-05-01T08:10:00Z",
+      "status": "Published",
+      "remarks": "Outstanding performance.",
+      "student": {
+        "id": "std-009",
+        "name": "Nabin Shrestha",
+        "rollNumber": 2,
+        "class": "10-B",
+        "marks": { "math": 97, "science": 91, "english": 89 }
+      }
+    },
+    {
+      "id": "rpt-010",
+      "title": "Internal Assessment",
+      "createdBy": "Teacher",
+      "createdAt": "2025-05-10T11:00:00Z",
+      "status": "Published",
+      "remarks": "Good improvement.",
+      "student": {
+        "id": "std-010",
+        "name": "Suman Adhikari",
+        "rollNumber": 6,
+        "class": "10-C",
+        "marks": { "math": 83, "science": 79, "english": 85 }
+      }
+    },
+    {
+      "id": "rpt-011",
+      "title": "Monthly Report",
+      "createdBy": "Admin",
+      "createdAt": "2025-05-18T10:25:00Z",
+      "status": "Draft",
+      "remarks": "Stable results.",
+      "student": {
+        "id": "std-011",
+        "name": "Asha Gurung",
+        "rollNumber": 14,
+        "class": "10-A",
+        "marks": { "math": 76, "science": 70, "english": 88 }
+      }
+    },
+    {
+      "id": "rpt-012",
+      "title": "Annual Progress",
+      "createdBy": "Teacher",
+      "createdAt": "2025-06-02T09:00:00Z",
+      "status": "Published",
+      "remarks": "Excellent overall.",
+      "student": {
+        "id": "std-012",
+        "name": "Bibek Lama",
+        "rollNumber": 1,
+        "class": "10-B",
+        "marks": { "math": 90, "science": 92, "english": 84 }
+      }
+    },
+    {
+      "id": "rpt-013",
+      "title": "Performance Review",
+      "createdBy": "Admin",
+      "createdAt": "2025-06-10T08:45:00Z",
+      "status": "Published",
+      "remarks": "Needs attention in math.",
+      "student": {
+        "id": "std-013",
+        "name": "Deepa Koirala",
+        "rollNumber": 10,
+        "class": "10-C",
+        "marks": { "math": 68, "science": 82, "english": 74 }
+      }
+    },
+    {
+      "id": "rpt-014",
+      "title": "Mid-Year Evaluation",
+      "createdBy": "Teacher",
+      "createdAt": "2025-06-20T10:30:00Z",
+      "status": "Published",
+      "remarks": "Good participation.",
+      "student": {
+        "id": "std-014",
+        "name": "Ritesh Chaudhary",
+        "rollNumber": 16,
+        "class": "10-A",
+        "marks": { "math": 79, "science": 77, "english": 83 }
+      }
+    },
+    {
+      "id": "rpt-015",
+      "title": "Special Review",
+      "createdBy": "Admin",
+      "createdAt": "2025-07-01T07:50:00Z",
+      "status": "Draft",
+      "remarks": "Average performance.",
+      "student": {
+        "id": "std-015",
+        "name": "Sunita Yadav",
+        "rollNumber": 8,
+        "class": "10-B",
+        "marks": { "math": 72, "science": 69, "english": 75 }
+      }
+    },
+    {
+      "id": "rpt-016",
+      "title": "Final Semester Report",
+      "createdBy": "Teacher",
+      "createdAt": "2025-07-12T09:15:00Z",
+      "status": "Published",
+      "remarks": "Excellent consistency.",
+      "student": {
+        "id": "std-016",
+        "name": "Manish Bhandari",
+        "rollNumber": 4,
+        "class": "10-C",
+        "marks": { "math": 91, "science": 89, "english": 86 }
+      }
+    },
+    {
+      "id": "rpt-017",
+      "title": "Evaluation Summary",
+      "createdBy": "Admin",
+      "createdAt": "2025-07-20T08:20:00Z",
+      "status": "Published",
+      "remarks": "Improving steadily.",
+      "student": {
+        "id": "std-017",
+        "name": "Kavita Basnet",
+        "rollNumber": 13,
+        "class": "10-A",
+        "marks": { "math": 84, "science": 81, "english": 78 }
+      }
+    },
+    {
+      "id": "rpt-018",
+      "title": "Academic Summary",
+      "createdBy": "Teacher",
+      "createdAt": "2025-08-01T10:10:00Z",
+      "status": "Draft",
+      "remarks": "Needs better attendance.",
+      "student": {
+        "id": "std-018",
+        "name": "Arjun KC",
+        "rollNumber": 17,
+        "class": "10-B",
+        "marks": { "math": 73, "science": 76, "english": 70 }
+      }
+    },
+    {
+      "id": "rpt-019",
+      "title": "Comprehensive Review",
+      "createdBy": "Admin",
+      "createdAt": "2025-08-10T08:40:00Z",
+      "status": "Published",
+      "remarks": "Outstanding academic record.",
+      "student": {
+        "id": "std-019",
+        "name": "Neha Pandey",
+        "rollNumber": 19,
+        "class": "10-C",
+        "marks": { "math": 96, "science": 93, "english": 91 }
+      }
+    },
+    {
+      "id": "rpt-020",
+      "title": "Final Academic Report",
+      "createdBy": "Teacher",
+      "createdAt": "2025-08-20T11:30:00Z",
+      "status": "Published",
+      "remarks": "Strong finish to the academic year.",
+      "student": {
+        "id": "std-020",
+        "name": "Riya Shah",
+        "rollNumber": 20,
+        "class": "10-A",
+        "marks": { "math": 87, "science": 85, "english": 88 }
+      }
+    }
+  ],
+  "students": [
+  {
+    "id": "std-001",
+    "name": "Aarav Sharma",
+    "rollNumber": 12,
+    "class": "10-A",
+    "marks": { "math": 85, "science": 78, "english": 90 }
+  },
+  {
+    "id": "std-002",
+    "name": "Sita Karki",
+    "rollNumber": 7,
+    "class": "10-A",
+    "marks": { "math": 92, "science": 88, "english": 81 }
+  },
+  {
+    "id": "std-003",
+    "name": "Ramesh Thapa",
+    "rollNumber": 19,
+    "class": "10-B",
+    "marks": { "math": 70, "science": 65, "english": 74 }
+  },
+  {
+    "id": "std-004",
+    "name": "Nisha Adhikari",
+    "rollNumber": 3,
+    "class": "10-B",
+    "marks": { "math": 88, "science": 91, "english": 86 }
+  },
+  {
+    "id": "std-005",
+    "name": "Sagar Shrestha",
+    "rollNumber": 5,
+    "class": "10-C",
+    "marks": { "math": 81, "science": 77, "english": 79 }
+  }
+]
+}

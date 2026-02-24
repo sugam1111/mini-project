@@ -1,35 +1,30 @@
-// src/pages/reports/page.tsx
+"use client";
+
+import { useState } from "react";
+
 
 import { useReportsQuery } from "./hooks/use-reports";
+import ReportsTable from "./components/reports-table";
+import { Button } from "@/components/ui/button";
+import ReportFormDialog from "./components/report-form-dialog";
 
 export default function ReportsPage() {
   const { data, isLoading, isError } = useReportsQuery();
+  const [open, setOpen] = useState(false);
 
-  if (isLoading) {
-    return <div className="p-6">Loading...</div>;
-  }
-
-  if (isError) {
-    return <div className="p-6 text-red-500">Something went wrong.</div>;
-  }
+  if (isLoading) return <div className="p-6">Loading...</div>;
+  if (isError) return <div className="p-6 text-red-500">Something went wrong.</div>;
 
   return (
     <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">Reports</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Reports</h1>
+        <Button onClick={() => setOpen(true)}>Add Report</Button>
+      </div>
 
-      {data?.map((report) => (
-        <div
-          key={report.id}
-          className="border rounded-lg p-4"
-        >
-          <p className="font-medium">{report.title}</p>
-          <p className="text-sm text-gray-500">
-            {report.createdBy} •{" "}
-            {new Date(report.createdAt).toLocaleDateString()} •{" "}
-            {report.status}
-          </p>
-        </div>
-      ))}
+      <ReportsTable data={data ?? []} />
+
+      <ReportFormDialog open={open} onOpenChange={setOpen} />
     </div>
   );
 }

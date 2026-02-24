@@ -1,6 +1,9 @@
-// src/App.tsx
 
 import { Navigate, Route, Routes } from "react-router-dom";
+
+
+
+
 
 import ReportsPage from "@/pages/reports/page";
 import AppLayout from "./components/ui/app-layout";
@@ -23,3 +26,7 @@ export default function App() {
     </div>
   );
 }
+
+
+
+

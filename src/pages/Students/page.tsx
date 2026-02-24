@@ -1,33 +1,24 @@
-import { Loader } from "@/components/ui/Loader";
 import { useStudentsQuery } from "./hooks/use-students";
+import StudentsTable from "./components/students-table";
+import { Loader } from "@/components/ui/Loader";
+import { Button } from "@/components/ui/button";
 
-export default function MarksPage(){
-    const {data, isLoading, isError} = useStudentsQuery();
+export default function StudentsPage() {
+  const { data, isLoading, isError } = useStudentsQuery();
 
-    if (isLoading){
-        return <div>
-            <Loader />
-        </div>
-    }
+  if (isLoading) return <Loader />;
 
-    if(isError){
-        return <div>
-            <h2 className="text-red-500">Something Went Wrong !!!
-            </h2>
-        </div>
-    }
+  if (isError) {
+    return <div className="p-6 text-red-500">Something went wrong.</div>;
+  }
 
-    return <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Students</h1>
-
-        {data?.map((student) => (
-            <div className="border rounded-2xl p-4" key={student.id}>
-                <p>Name : {student.name}</p>
-                <p>S ID : {student.id} </p>
-                <h1 className="font-semibold text-green-500">Marks : </h1>
-                <p>science : {student.marks.science}</p>
-                <p>math : {student.marks.math}</p>
-            </div>
-        ))}
+  return (
+    <div className="p-6 space-y-4">
+      <div>
+        <h1 className="text-2xl font-semibold">Marks</h1>
+        <Button>Add Report</Button>
+      </div>
+      <StudentsTable data={data ?? []} />
     </div>
+  );
 }

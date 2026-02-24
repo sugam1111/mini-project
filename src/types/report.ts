@@ -1,20 +1,6 @@
-export interface Marks {
-    math : number;
-    science : number;
-    english : number;
-} 
+import type { Student } from "./student";
 
-
-
-export interface Student { 
-    id : string;
-    name : string;
-    rollNumber : number;
-    class : string;
-    marks : Marks;
-}
-
-export type ReportStatus = "Draft" | "Published" | "Archived" ;
+export type ReportStatus = "Draft" | "Published" | "Archived";
 
 export interface Report {
   id: string;
@@ -24,5 +10,4 @@ export interface Report {
   status: ReportStatus;
   remarks: string;
   student: Student;
-
 }
