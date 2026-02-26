@@ -3,8 +3,10 @@ import type { Report } from "@/types/report";
 import {
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   getPaginationRowModel,
   useReactTable,
+  type SortingState,
 } from "@tanstack/react-table";
 
 import { Input } from "@/components/ui/input";
@@ -34,6 +36,8 @@ export default function ReportsTable() {
     pageIndex: 0,
     pageSize: 5,
   });
+  
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const filteredReports = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -75,9 +79,11 @@ export default function ReportsTable() {
     data: filteredReports,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel : getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    state: { pagination },
+    state: { pagination, sorting },
     onPaginationChange: setPagination,
+    onSortingChange : setSorting,
   });
 
   return (
@@ -96,13 +102,22 @@ export default function ReportsTable() {
             {table.getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                     key={header.id} 
+                     onClick={header.column.getToggleSortingHandler()}
+                     className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
+                        {{
+                        asc: "🔼",
+                        desc: "🔽",
+                      }[header.column.getIsSorted() as string] ?? null}
                   </TableHead>
                 ))}
               </TableRow>

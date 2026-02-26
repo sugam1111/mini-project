@@ -14,7 +14,12 @@ import { APP_ROUTES } from "./config/routes";
 
 export default function App() {
   return (
-    <div className="m-4">
+    <div>
+      <div>
+        <h1 className="text-blue-500 text-center mt-5 pb-5 border-b font-bold text-3xl">Students Report & Marks</h1>
+      </div>
+      <div className="m-4">
+      
       <AppLayout >
       <Routes>
         <Route path="/" element={<Navigate to={APP_ROUTES.reports} replace />} />
@@ -24,8 +29,12 @@ export default function App() {
       </Routes>
     </AppLayout>
     </div>
+    </div>
   );
 }
+
+
+
 
 
 

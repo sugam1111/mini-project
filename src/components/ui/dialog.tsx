@@ -34,7 +34,7 @@ export function Dialog({
           ) : null}
         </div>
 
-        <div className="p-5">{children}</div>
+        <div className="p-4 ">{children}</div>
       </div>
     </div>
   );

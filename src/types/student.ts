@@ -11,3 +11,12 @@ export interface Student {
   class: string;
   marks: Marks;
 }
+
+export interface StudentFormState {
+  name: string;
+  rollNumber: string;
+  className: string;
+  math: string;
+  science: string;
+  english: string;
+};

@@ -1,7 +1,18 @@
-import React, { useMemo, useState } from "react";
 import type { Student } from "@/types/student";
-import { flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
+} from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
 
+import SimplePagination from "@/components/ui/PaginationUI";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,76 +21,96 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SimplePagination from "@/components/ui/PaginationUI";
-import { Input } from "@/components/ui/input";
+import { studentColumns } from "./students-table/columns";
+import ColumnFilter from "./students-table/ColumnFilter";
+
+
 
 type Props = {
   data: Student[];
 };
 
 export default function StudentsTable({ data }: Props) {
+  const [search, setSearch] = useState("");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 4 });
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "rollNumber", desc: false },
+  ]);
 
-  const [search, setSearch] = useState("")
-
-  const [pagination, setPagination] = useState({
-    pageIndex : 0,
-    pageSize : 2,
-  })
-
-  const filteredMarks = useMemo(() => {
-    const q =  search.trim().toLowerCase();
+  const searchedData = useMemo(() => {
+    const q = search.trim().toLowerCase();
     if (!q) return data;
 
-
-    return data.filter((r) => 
-    (r.name ?? "").toLowerCase().includes(q) ||
-    (r.class ?? "").toLowerCase().includes(q)
-    )
-  },[data, search])
-
-  const columns = React.useMemo(
-    () => [
-      { header: "Name", accessorKey: "name" },
-      { header: "Roll", accessorKey: "rollNumber" },
-      { header: "Class", accessorKey: "class" },
-      { header: "Math", accessorKey: "marks.math" },
-      { header: "Science", accessorKey: "marks.science" },
-      { header: "English", accessorKey: "marks.english" },
-    ],
-    []
-  );
+    return data.filter(
+      (r) =>
+        (r.name ?? "").toLowerCase().includes(q) ||
+        (r.class ?? "").toLowerCase().includes(q),
+    );
+  }, [data, search]);
 
   const table = useReactTable({
-    data : filteredMarks,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel : getPaginationRowModel(),
-    state : {pagination},
-    onPaginationChange : setPagination
+    data: searchedData,
+    columns: studentColumns,
 
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+
+    state: { pagination, sorting, columnFilters },
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
   });
+
+  useEffect(() => {
+    setPagination((p) => ({ ...p, pageIndex: 0 }));
+  }, [search, columnFilters]);
 
   return (
     <div className="rounded-xl border overflow-hidden">
-      <div>
+      <div className="p-3">
         <div className="w-full sm:max-w-sm">
-        <Input
-          placeholder="Search Marks..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+          <Input
+            placeholder="Search (name or class)..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
       </div>
 
-      </div>
       <Table>
         <TableHeader className="bg-muted/40">
           {table.getHeaderGroups().map((hg) => (
             <TableRow key={hg.id}>
               {hg.headers.map((header) => (
                 <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                  {header.isPlaceholder ? null : (
+                    <div>
+                      <div
+                        onClick={header.column.getToggleSortingHandler()}
+                        className={
+                          header.column.getCanSort()
+                            ? "cursor-pointer select-none flex items-center gap-2"
+                            : ""
+                        }
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                        {{
+                          asc: "🔼",
+                          desc: "🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+
+                      {header.column.getCanFilter() ? (
+                        <ColumnFilter column={header.column} />
+                      ) : null}
+                    </div>
+                  )}
                 </TableHead>
               ))}
             </TableRow>
@@ -87,14 +118,14 @@ export default function StudentsTable({ data }: Props) {
         </TableHeader>
 
         <TableBody>
-          {table.getPaginationRowModel().rows.length === 0 ? (
+          {table.getRowModel().rows.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={columns.length} className="py-10 text-center">
+              <TableCell colSpan={6} className="py-10 text-center">
                 No students found
               </TableCell>
             </TableRow>
           ) : (
-            table.getPaginationRowModel().rows.map((row) => (
+            table.getRowModel().rows.map((row) => (
               <TableRow key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
