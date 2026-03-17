@@ -41,5 +41,5 @@ export function Dialog({
 }
 
 export function DialogFooter({ children }: { children: React.ReactNode }) {
-  return <div className="mt-5 flex justify-end gap-2">{children}</div>;
+  return <div className="mt-5 flex justify-end gap-4">{children}</div>;
 }

@@ -1,15 +1,21 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import type { StudentFormState } from "@/types/student";
-import type { Student } from "@/types/student";
-import { createStudent } from "../helper";
+import type { Student, StudentFormState } from "@/types/student";
+import { toast } from "sonner";
+import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
 
-export default function StudentFormDialog() {
-  const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient();
+type Props = {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  editing?: Student | null;
+};
+
+export default function StudentFormDialog({ open, onOpenChange, editing }: Props) {
+  const createMutation = useCreateStudent();
+  const updateMutation = useUpdateStudent();
+  const isEdit = !!editing;
 
   const [form, setForm] = useState<StudentFormState>({
     name: "",
@@ -20,15 +26,19 @@ export default function StudentFormDialog() {
     english: "",
   });
 
-  const handleChange = (key: keyof StudentFormState, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
+  useEffect(() => {
+    if (!open) return;
 
-  const mutation = useMutation({
-    mutationFn: createStudent,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] });
-      setOpen(false);
+    if (editing) {
+      setForm({
+        name: editing.name ?? "",
+        rollNumber: String(editing.rollNumber ?? ""),
+        className: editing.class ?? "",
+        math: String(editing.marks?.math ?? ""),
+        science: String(editing.marks?.science ?? ""),
+        english: String(editing.marks?.english ?? ""),
+      });
+    } else {
       setForm({
         name: "",
         rollNumber: "",
@@ -37,14 +47,39 @@ export default function StudentFormDialog() {
         science: "",
         english: "",
       });
-    },
-  });
+    }
+  }, [open, editing]);
+
+  const handleChange = (key: keyof StudentFormState, value: string) => {
+    setForm((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleSave = () => {
-    const newStudent: Student = {
-      id:
-        (crypto as any)?.randomUUID?.() ??
-        `std-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    const allEmpty =
+      !form.name.trim() &&
+      !form.className.trim() &&
+      !form.rollNumber.trim() &&
+      !form.math.trim() &&
+      !form.science.trim() &&
+      !form.english.trim();
+
+    if (!isEdit && allEmpty) return;
+
+    const hasEmpty =
+      !form.name.trim() ||
+      !form.className.trim() ||
+      !form.rollNumber.trim() ||
+      !form.math.trim() ||
+      !form.science.trim() ||
+      !form.english.trim();
+
+    if (hasEmpty) {
+      toast.error("Please fill all the fields");
+      return;
+    }
+
+    const student: Student = {
+      id: editing?.id ?? crypto.randomUUID(),
       name: form.name.trim(),
       rollNumber: Number(form.rollNumber),
       class: form.className.trim(),
@@ -55,91 +90,80 @@ export default function StudentFormDialog() {
       },
     };
 
-    mutation.mutate(newStudent);
+    const mutation = isEdit ? updateMutation : createMutation;
+
+    mutation.mutate(student, {
+      onSuccess: () => {
+        toast.success(isEdit ? "Updated" : "Saved");
+        onOpenChange(false);
+      },
+      onError: () => toast.error("Something went wrong"),
+    });
   };
 
+  const saving = createMutation.isPending || updateMutation.isPending;
+
   return (
-    <>
-      <Button onClick={() => setOpen(true)}>Add Marks</Button>
-
-      <Dialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Add Student Marks"
-        description="Enter student details and marks."
-      >
-        <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2 sm:col-span-2">
-              <label className="text-sm font-medium">Name</label>
-              <Input
-                value={form.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                placeholder="e.g. Aarav Sharma"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Roll Number</label>
-              <Input
-                type="number"
-                value={form.rollNumber}
-                onChange={(e) => handleChange("rollNumber", e.target.value)}
-                placeholder="e.g. 12"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Class</label>
-              <Input
-                value={form.className}
-                onChange={(e) => handleChange("className", e.target.value)}
-                placeholder="e.g. 10-A"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Math</label>
-              <Input
-                type="number"
-                value={form.math}
-                onChange={(e) => handleChange("math", e.target.value)}
-                placeholder="0 - 100"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Science</label>
-              <Input
-                type="number"
-                value={form.science}
-                onChange={(e) => handleChange("science", e.target.value)}
-                placeholder="0 - 100"
-              />
-            </div>
-
-            <div className="space-y-2 sm:col-span-2">
-              <label className="text-sm font-medium">English</label>
-              <Input
-                type="number"
-                value={form.english}
-                onChange={(e) => handleChange("english", e.target.value)}
-                placeholder="0 - 100"
-              />
-            </div>
+    <Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={isEdit ? "Edit Student Marks" : "Add Student Marks"}
+      description="Enter student details and marks."
+    >
+      <div className="space-y-4">
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-2 sm:col-span-2">
+            <label className="text-sm font-medium">Name</label>
+            <Input value={form.name} onChange={(e) => handleChange("name", e.target.value)} />
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Roll Number</label>
+            <Input
+              type="number"
+              value={form.rollNumber}
+              onChange={(e) => handleChange("rollNumber", e.target.value)}
+            />
+          </div>
 
-            <Button onClick={handleSave} disabled={mutation.isPending}>
-              {mutation.isPending ? "Saving..." : "Save"}
-            </Button>
-          </DialogFooter>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Class</label>
+            <Input value={form.className} onChange={(e) => handleChange("className", e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Math</label>
+            <Input type="number" value={form.math} onChange={(e) => handleChange("math", e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Science</label>
+            <Input
+              type="number"
+              value={form.science}
+              onChange={(e) => handleChange("science", e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-2 sm:col-span-2">
+            <label className="text-sm font-medium">English</label>
+            <Input
+              type="number"
+              value={form.english}
+              onChange={(e) => handleChange("english", e.target.value)}
+            />
+          </div>
         </div>
-      </Dialog>
-    </>
+
+        <DialogFooter>
+          <Button className="bg-red-500 hover:bg-red-700" variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleSave} disabled={saving}>
+            {saving ? "Saving..." : isEdit ? "Update" : "Save"}
+          </Button>
+        </DialogFooter>
+      </div>
+    </Dialog>
   );
 }

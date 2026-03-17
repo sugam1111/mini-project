@@ -32,6 +32,7 @@ export function parseRangeText(
 
 export const rangeTextNumber: FilterFn<Student> = (row, columnId, filterValue) => {
   const q = String(filterValue ?? "").trim();
+  //return true here means if users didnt type anything use this prev row
   if (!q) return true;
 
   const parsed = parseRangeText(q);

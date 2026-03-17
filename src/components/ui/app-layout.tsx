@@ -1,5 +1,4 @@
-// src/components/app-layout.tsx
-
+import Menu from "@/assets/icons/Menu";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
@@ -17,38 +16,35 @@ export default function AppLayout({ children }: Props) {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
-      
-      {/* Sidebar */}
+    <div className="min-h-screen bg-background text-foreground">
       <aside
-        className={`border-r transition-all duration-300 ${
+        className={`fixed left-0 top-18.25 z-40 h-[calc(100vh-73px)] overflow-y-auto border-r bg-background transition-all duration-300 ${
           isOpen ? "w-64" : "w-16"
         }`}
       >
-        <div className="p-4 flex items-center justify-between">
-          {isOpen && (
-            <p className="text-lg font-semibold">Mini Dashboard</p>
-          )}
+        <div className="flex items-center justify-between p-4 mt-4">
+          {isOpen && <p className="text-2xl font-bold">Mini Dashboard</p>}
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="text-sm px-2 py-1 rounded-md hover:bg-muted"
+            className="rounded-md px-2 py-1 text-sm hover:bg-muted"
           >
-            {isOpen ? "←" : "→"}
+            {isOpen ? <Menu /> : <Menu />}
           </button>
         </div>
 
-        <nav className="mt-4 space-y-1 px-2">
+        <nav className="mt-4 space-y-2 px-2">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
                 [
-                  "block rounded-md px-3 py-2 text-sm transition",
-                  isActive
-                    ? "bg-muted font-medium"
-                    : "hover:bg-muted/60",
+                  "rounded-md text-sm transition",
+                  isOpen
+                    ? "block px-3 py-2 text-left"
+                    : "flex h-10 w-10 items-center justify-center mx-auto",
+                  isActive ? "bg-purple-600 text-white font-medium" : "hover:bg-purple-900 font-bold hover:text-white",
                 ].join(" ")
               }
             >
@@ -58,8 +54,11 @@ export default function AppLayout({ children }: Props) {
         </nav>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 p-6">
+      <main
+        className={`min-h-screen  transition-all duration-300 ${
+          isOpen ? "ml-64" : "ml-16"
+        }`}
+      >
         {children}
       </main>
     </div>
