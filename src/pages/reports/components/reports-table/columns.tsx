@@ -1,5 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Report } from "@/types/report";
+import type { Report } from "@/types/types";
 import { Button } from "@/components/ui/button";
 
 function formatDate(dateStr: string) {

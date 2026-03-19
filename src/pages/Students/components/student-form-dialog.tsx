@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
 import { Input } from "@/components/ui/input";
-import type { Student, StudentFormState } from "@/types/student";
 import { toast } from "sonner";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
-import Toast from "@/components/ui/Toast";
+import Toast from "@/components/Hooks/Toast";
+import type { Student, StudentFormProps, StudentFormState } from "@/types/types";
 
-type Props = {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-  editing?: Student | null;
-};
 
-export default function StudentFormDialog({ open, onOpenChange, editing }: Props) {
+export default function StudentFormDialog({ open, onOpenChange, editing }: StudentFormProps) {
   const createMutation = useCreateStudent();
   const updateMutation = useUpdateStudent();
   const isEdit = !!editing;

@@ -1,13 +1,10 @@
-import type { Column, Table } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
+import type { ColumnFilterTypo } from "@/types/types";
 
 export default function ColumnFilter<T>({
   column,
   table,
-}: {
-  column: Column<T, unknown>;
-  table: Table<T>;
-}) {
+}: ColumnFilterTypo<T>) {
   const filterValue = column.getFilterValue();
   const id = column.id;
 

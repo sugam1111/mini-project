@@ -1,4 +1,3 @@
-import type { Student } from "@/types/student";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,7 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
-import SimplePagination from "@/components/ui/PaginationUI";
+import SimplePagination from "@/components/Pagination/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -28,15 +27,10 @@ import { useDeleteStudent } from "../hooks/use-students";
 import { toast } from "sonner";
 import StudentsTableFilters from "./StudentTableFilters";
 import { Button } from "@/components/ui/button";
-import Toast from "@/components/ui/Toast";
+import Toast from "@/components/Hooks/Toast";
+import type { Student, StudentTableProps } from "@/types/types";
 
-type Props = {
-  data: Student[];
-  onEdit: (student: Student) => void;
-  onAdd: () => void;
-};
-
-export default function StudentsTable({ data, onEdit, onAdd }: Props) {
+export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps) {
   const del = useDeleteStudent();
 
   const [search, setSearch] = useState("");

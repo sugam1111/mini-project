@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import ColumnFilter from "@/pages/Students/components/ColumnFilter";
-import type { Student } from "@/types/student";
+import type { Student } from "@/types/types";
 import type { Table } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
 import { useState } from "react";

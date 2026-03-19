@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
 import { Input } from "@/components/ui/input";
-import type { Report } from "@/types/report";
+import type { Report, ReportDialog } from "@/types/types";
 import { toast } from "sonner";
 import { useCreateReport, useUpdateReport } from "../hooks/use-reports";
-import Toast from "@/components/ui/Toast";
+import Toast from "@/components/Hooks/Toast";
 
-type Props = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  editing?: Report | null;
-};
 
-export default function ReportFormDialog({ open, onOpenChange, editing }: Props) {
+export default function ReportFormDialog({ open, onOpenChange, editing }: ReportDialog) {
   const createMutation = useCreateReport();
   const updateMutation = useUpdateReport();
   const isEdit = !!editing;

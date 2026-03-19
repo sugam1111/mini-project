@@ -1,4 +1,4 @@
-import type { Report } from "@/types/report";
+import type { Report } from "@/types/types";
 import axios from "axios";
 
 const REPORTS_API = import.meta.env.VITE_REPORTS_API as string;

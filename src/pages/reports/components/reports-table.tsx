@@ -1,4 +1,4 @@
-import type { Report } from "@/types/report";
+import type { Report, ReportTableTypes } from "@/types/types";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
-import SimplePagination from "@/components/ui/PaginationUI";
+import SimplePagination from "@/components/Pagination/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -27,15 +27,10 @@ import { toast } from "sonner";
 import { getReportColumns } from "./reports-table/columns";
 import ReportsTableFilters from "./reports-table/ReportsTableFilters";
 import { useDeleteReport } from "../hooks/use-reports";
-import Toast from "@/components/ui/Toast";
+import Toast from "@/components/Hooks/Toast";
 
-type DataTypes = {
-  data: Report[];   
-  onEdit: (report: Report) => void;
-  onAdd: () => void;
-};
 
-export default function ReportsTable({ data, onEdit, onAdd }: DataTypes) {
+export default function ReportsTable({ data, onEdit, onAdd }: ReportTableTypes) {
   const del = useDeleteReport();
 
   const [search, setSearch] = useState("");

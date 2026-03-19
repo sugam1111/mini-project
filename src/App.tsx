@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import ReportsPage from "@/pages/reports/page";
-import AppLayout from "./components/ui/app-layout";
+import AppLayout from "./components/Layout/layout";
 import MarksPage from "./pages/Students/page";
 import { APP_ROUTES } from "./config/routes";
 

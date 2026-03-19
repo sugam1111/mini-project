@@ -1,4 +1,4 @@
-import { Loader } from "@/components/ui/Loader";
+import { Loader } from "@/components/Loader/loader";
 import type { Student } from "@/types/student";
 import { useState } from "react";
 import StudentFormDialog from "./components/student-form-dialog";
