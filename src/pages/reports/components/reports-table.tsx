@@ -69,7 +69,7 @@ export default function ReportsTable({ data, onEdit, onAdd }: DataTypes) {
     if (!ok) return;
   await  del.mutateAsync(report.id, {
       onSuccess: () => toast.custom(() => (
-        <Toast title="deleted Succesfully" name={report.student.name} action="delete" />
+        <Toast title="Deleted !" name={report.student.name}  action="delete" />
       )),
 
       onError: () => toast.custom(() => (
@@ -102,8 +102,8 @@ export default function ReportsTable({ data, onEdit, onAdd }: DataTypes) {
   });
 
   return (
-    <div className="mx-4 space-y-3 md:max-w-200 lg:max-w-full overflow-x-hidden">
-  <div className="w-full min-w-0 ">
+    <div className="mx-4  md:max-w-200 lg:max-w-full overflow-x-hidden">
+  <div className="w-full min-w-0 space-y-3 ">
     <div className="w-full min-w-0 rounded-2xl bg-white px-1">
       <div className="flex flex-col gap-5">
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">

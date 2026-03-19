@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import type { Student, StudentFormState } from "@/types/student";
 import { toast } from "sonner";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
+import Toast from "@/components/ui/Toast";
 
 type Props = {
   open: boolean;
@@ -50,6 +51,8 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Props
     }
   }, [open, editing]);
 
+
+// this handlechange updates one field in the form without touching others
   const handleChange = (key: keyof StudentFormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
@@ -74,7 +77,9 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Props
       !form.english.trim();
 
     if (hasEmpty) {
-      toast.error("Please fill all the fields");
+      toast.custom(() => (
+        <Toast title="Empty Fields !!" type="error" action="create" description="Please fill out all the fields in the form !!" />
+      ));
       return;
     }
 
@@ -94,7 +99,9 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Props
 
     mutation.mutate(student, {
       onSuccess: () => {
-        toast.success(isEdit ? "Updated" : "Saved");
+        toast.custom(() => (
+          <Toast title="saved" name={student.name} action="create" type="success" />
+        ));
         onOpenChange(false);
       },
       onError: () => toast.error("Something went wrong"),

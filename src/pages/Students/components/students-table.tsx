@@ -63,9 +63,11 @@ export default function StudentsTable({ data, onEdit, onAdd }: Props) {
 
     del.mutate(student.id, {
       onSuccess: () => toast.custom(() => (
-        <Toast action="delete" name={student.name} />
+        <Toast title="deleted" action="delete" name={student.name} />
       )),
-      onError: () => toast.error("Delete failed"),
+      onError: () => toast.custom(() => (
+        <Toast title="delete Failed" name="student.name" type="error" />
+      )),
     });
   };
 
@@ -97,10 +99,10 @@ export default function StudentsTable({ data, onEdit, onAdd }: Props) {
   }, [search, columnFilters]);
 
   return (
-    <div className="space-y-3 mx-4 ">
+    <div className="space-y-4 mx-4 ">
       <div className="w-full rounded-2xl  bg-white px-1 ">
         <div className="flex flex-col gap-4">
-          <div className="flex w-full min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
             <div className="w-full min-w-0 flex-1">
               <Input
                 className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-slate-700 shadow-sm transition placeholder:text-slate-400 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-slate-300"
