@@ -1,9 +1,9 @@
 import { Loader } from "@/components/Loader/loader";
-import type { Student } from "@/types/student";
 import { useState } from "react";
 import StudentFormDialog from "./components/student-form-dialog";
 import StudentsTable from "./components/students-table";
 import { useStudentsQuery } from "./hooks/use-students";
+import type { Student } from "@/types/types";
 
 export default function StudentsPage() {
   const { data, isLoading, isError } = useStudentsQuery();

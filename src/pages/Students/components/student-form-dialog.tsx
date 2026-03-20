@@ -2,15 +2,24 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
-import Toast from "@/components/Hooks/Toast";
-import type { Student, StudentFormProps, StudentFormState } from "@/types/types";
+import { useAppToast } from "@/components/Hooks/Toast";
+import type { StudentFormProps, StudentFormState } from "@/types/types";
+import {
+  buildStudentPayload,
+  hasStudentFormEmptyFields,
+  isStudentFormCompletelyEmpty,
+} from "./students-table/Constant";
 
-
-export default function StudentFormDialog({ open, onOpenChange, editing }: StudentFormProps) {
+export default function StudentFormDialog({
+  open,
+  onOpenChange,
+  editing,
+}: StudentFormProps) {
   const createMutation = useCreateStudent();
   const updateMutation = useUpdateStudent();
+  const { appToast } = useAppToast();
+
   const isEdit = !!editing;
 
   const [form, setForm] = useState<StudentFormState>({
@@ -46,60 +55,38 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Stude
     }
   }, [open, editing]);
 
-
-// this handlechange updates one field in the form without touching others
   const handleChange = (key: keyof StudentFormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSave = () => {
-    const allEmpty =
-      !form.name.trim() &&
-      !form.className.trim() &&
-      !form.rollNumber.trim() &&
-      !form.math.trim() &&
-      !form.science.trim() &&
-      !form.english.trim();
+    if (!isEdit && isStudentFormCompletelyEmpty(form)) return;
 
-    if (!isEdit && allEmpty) return;
-
-    const hasEmpty =
-      !form.name.trim() ||
-      !form.className.trim() ||
-      !form.rollNumber.trim() ||
-      !form.math.trim() ||
-      !form.science.trim() ||
-      !form.english.trim();
-
-    if (hasEmpty) {
-      toast.custom(() => (
-        <Toast title="Empty Fields !!" type="error" action="create" description="Please fill out all the fields in the form !!" />
-      ));
+    if (hasStudentFormEmptyFields(form)) {
+      appToast({
+        type: "error",
+        description: "Please fill out all the fields in the form !!",
+      });
       return;
     }
 
-    const student: Student = {
-      id: editing?.id ?? crypto.randomUUID(),
-      name: form.name.trim(),
-      rollNumber: Number(form.rollNumber),
-      class: form.className.trim(),
-      marks: {
-        math: Number(form.math),
-        science: Number(form.science),
-        english: Number(form.english),
-      },
-    };
-
+    const student = buildStudentPayload(form, editing);
     const mutation = isEdit ? updateMutation : createMutation;
 
     mutation.mutate(student, {
       onSuccess: () => {
-        toast.custom(() => (
-          <Toast title="saved" name={student.name} action="create" type="success" />
-        ));
+        appToast({
+          type: isEdit ? "update" : "create",
+          name: student.name,
+        });
         onOpenChange(false);
       },
-      onError: () => toast.error("Something went wrong"),
+      onError: () => {
+        appToast({
+          type: "error",
+          description: "Something went wrong",
+        });
+      },
     });
   };
 
@@ -116,7 +103,10 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Stude
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2 sm:col-span-2">
             <label className="text-sm font-medium">Name</label>
-            <Input value={form.name} onChange={(e) => handleChange("name", e.target.value)} />
+            <Input
+              value={form.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
@@ -130,12 +120,19 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Stude
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Class</label>
-            <Input value={form.className} onChange={(e) => handleChange("className", e.target.value)} />
+            <Input
+              value={form.className}
+              onChange={(e) => handleChange("className", e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Math</label>
-            <Input type="number" value={form.math} onChange={(e) => handleChange("math", e.target.value)} />
+            <Input
+              type="number"
+              value={form.math}
+              onChange={(e) => handleChange("math", e.target.value)}
+            />
           </div>
 
           <div className="space-y-2">
@@ -158,10 +155,18 @@ export default function StudentFormDialog({ open, onOpenChange, editing }: Stude
         </div>
 
         <DialogFooter>
-          <Button className="bg-red-500 hover:bg-red-700" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            className="bg-red-500 hover:bg-red-700"
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+          >
             Cancel
           </Button>
-          <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleSave} disabled={saving}>
+          <Button
+            className="bg-blue-800 hover:bg-blue-900"
+            onClick={handleSave}
+            disabled={saving}
+          >
             {saving ? "Saving..." : isEdit ? "Update" : "Save"}
           </Button>
         </DialogFooter>

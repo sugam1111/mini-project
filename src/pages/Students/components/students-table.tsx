@@ -23,15 +23,15 @@ import {
 
 import { getStudentColumns } from "./students-table/columns";
 
-import { useDeleteStudent } from "../hooks/use-students";
-import { toast } from "sonner";
-import StudentsTableFilters from "./StudentTableFilters";
+import { useAppToast } from "@/components/Hooks/Toast";
 import { Button } from "@/components/ui/button";
-import Toast from "@/components/Hooks/Toast";
 import type { Student, StudentTableProps } from "@/types/types";
+import { useDeleteStudent } from "../hooks/use-students";
+import StudentsTableFilters from "./StudentTableFilters";
 
 export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps) {
   const del = useDeleteStudent();
+  const {appToast} = useAppToast()
 
   const [search, setSearch] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -51,20 +51,23 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     );
   }, [data, search]);
 
-  const handleDelete = (student: Student) => {
-    const ok = confirm(`Delete ${student.name}?`);
-    if (!ok) return;
+ const handleDelete = (student: Student) => {
+  const ok = confirm(`Delete ${student.name}?`);
+  if (!ok) return;
 
-    del.mutate(student.id, {
-      onSuccess: () => toast.custom(() => (
-        <Toast title="deleted" action="delete" name={student.name} />
-      )),
-      onError: () => toast.custom(() => (
-        <Toast title="delete Failed" name="student.name" type="error" />
-      )),
-    });
-  };
-
+  del.mutate(student.id, {
+    onSuccess: () =>
+      appToast({
+        type: "delete",
+        name: student.name,
+      }),
+    onError: () =>
+      appToast({
+        type: "error",
+        description: `Failed to delete ${student.name}`,
+      }),
+  });
+};
   const columns = useMemo(
     () =>
       getStudentColumns({

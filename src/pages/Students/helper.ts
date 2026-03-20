@@ -1,4 +1,4 @@
-import type { Student } from "@/types/student";
+import type { Student } from "@/types/types";
 import axios from "axios";
 
 const STUDENT_API = import.meta.env.VITE_STUDENTS_API;
@@ -20,7 +20,7 @@ export async function createStudent(student: Student) {
   return student;
 }
 
-// ✅ UPDATE
+// UPDATE
 export async function updateStudent(student: Student) {
   const stored = localStorage.getItem("students");
   const students = stored ? (JSON.parse(stored) as Student[]) : [];
@@ -31,7 +31,7 @@ export async function updateStudent(student: Student) {
   return student;
 }
 
-// ✅ DELETE
+// DELETE
 export async function deleteStudent(id: string) {
   const stored = localStorage.getItem("students");
   const students = stored ? (JSON.parse(stored) as Student[]) : [];

@@ -63,3 +63,11 @@ export interface StudentTableProps {
   onEdit: (student: Student) => void;
   onAdd: () => void;
 };
+
+export interface ToastProps{
+  title: string;
+  description?: string;
+  name?: string;
+  type?: "success" | "error";
+  action?: "create" | "update" | "delete";
+};

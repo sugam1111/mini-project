@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Student } from "@/types/student";
 import { rangeTextNumber } from "./filter";
 import { Button } from "@/components/ui/button";
+import type { Student } from "@/types/types";
 
 export function getStudentColumns(params: {
   onEdit: (s: Student) => void;

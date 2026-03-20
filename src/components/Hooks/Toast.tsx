@@ -1,62 +1,78 @@
 import { CheckCheck, Trash2, Pencil, CircleAlert, Plus } from "lucide-react";
+import { toast } from "sonner";
 
-type Props = {
-  title: string;
-  description?: string;
+type ToastType = "create" | "update" | "delete" | "error";
+
+type ToastOptions = {
+  type: ToastType;
   name?: string;
-  type?: "success" | "error";
-  action?: "create" | "update" | "delete";
+  description?: string;
 };
 
-const Toast = ({
+type ToastContentProps = {
+  title: string;
+  description?: string;
+  message?: string;
+  status: "success" | "error";
+  type: ToastType;
+};
+
+const toastConfig = {
+  create: {
+    title: "Saved",
+    status: "success" as const,
+    getMessage: (name?: string) =>
+      name ? `${name} has been saved successfully` : undefined,
+  },
+  update: {
+    title: "Updated",
+    status: "success" as const,
+    getMessage: (name?: string) =>
+      name ? `${name} has been updated successfully` : undefined,
+  },
+  delete: {
+    title: "Deleted",
+    status: "success" as const,
+    getMessage: (name?: string) =>
+      name ? `${name} has been deleted successfully` : undefined,
+  },
+  error: {
+    title: "Failed",
+    status: "error" as const,
+    getMessage: () => undefined,
+  },
+};
+
+function ToastIcon({ type, status }: { type: ToastType; status: "success" | "error" }) {
+  if (status === "error") {
+    return <CircleAlert size={18} />;
+  }
+
+  switch (type) {
+    case "create":
+      return <Plus size={18} />;
+    case "update":
+      return <Pencil size={18} />;
+    case "delete":
+      return <Trash2 size={18} />;
+    default:
+      return <CheckCheck size={18} />;
+  }
+}
+
+function ToastContent({
   title,
   description,
-  name,
-  type = "success",
-  action,
-}: Props) => {
-  const isSuccess = type === "success";
-
-  const getMessage = () => {
-    if (!name) return null;
-
-    if (!isSuccess) return "action failed";
-
-    switch (action) {
-      case "create":
-        return "has been saved successfully";
-      case "update":
-        return "has been updated successfully";
-      case "delete":
-        return "has been deleted successfully";
-      default:
-        return "";
-    }
-  };
-
-  const ActionIcon = () => {
-    if (!isSuccess) return <CircleAlert size={18} />;
-
-    switch (action) {
-      case "create":
-        return <Plus size={18} />;
-      case "update":
-        return <Pencil size={18} />;
-      case "delete":
-        return <Trash2 size={18} />;
-      default:
-        return <CheckCheck size={18} />;
-    }
-  };
+  message,
+  status,
+  type,
+}: ToastContentProps) {
+  const isSuccess = status === "success";
 
   return (
     <div
       className={`relative flex min-w-[340px] max-w-[440px] items-start gap-4 overflow-hidden rounded-3xl border p-4 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.25)]
-      ${
-        isSuccess
-          ? "border-emerald-200 bg-white"
-          : "border-rose-200 bg-white"
-      }`}
+      ${isSuccess ? "border-emerald-200 bg-white" : "border-rose-200 bg-white"}`}
     >
       <div
         className={`absolute inset-x-0 top-0 h-1 ${
@@ -74,7 +90,7 @@ const Toast = ({
             : "bg-rose-50 text-rose-600 ring-1 ring-rose-200"
         }`}
       >
-        <ActionIcon />
+        <ToastIcon type={type} status={status} />
       </div>
 
       <div className="flex-1">
@@ -93,12 +109,7 @@ const Toast = ({
           </span>
         </div>
 
-        {name && getMessage() && (
-          <p className="mt-1 text-sm text-slate-600">
-            <span className="font-semibold text-slate-900">{name}</span>{" "}
-            {getMessage()}
-          </p>
-        )}
+        {message && <p className="mt-1 text-sm text-slate-600">{message}</p>}
 
         {description && (
           <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
@@ -106,6 +117,27 @@ const Toast = ({
       </div>
     </div>
   );
-};
+}
 
-export default Toast;
+export function showAppToast({ type, name, description }: ToastOptions) {
+  const config = toastConfig[type];
+  const message = config.getMessage(name);
+
+  toast.custom(() => (
+    <ToastContent
+      title={config.title}
+      description={description}
+      message={message}
+      status={config.status}
+      type={type}
+    />
+  ));
+}
+
+export function useAppToast() {
+  return {
+    appToast: showAppToast,
+  };
+}
+
+export default ToastContent;
