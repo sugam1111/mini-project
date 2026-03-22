@@ -1,14 +1,12 @@
 import { Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import AppLayout from "./components/layout/layout";
 import { APP_ROUTES } from "./config/routes";
-import { Loader } from "./components/loader/loader";
+import AppLayout from "./components/layout/layout";
+import NotFoundPage from "./pages/not-found";
 
-
-// normal import = bring now and lazy import means = bring later
-const ReportsPage = lazy(function() { return import("@/pages/reports/page"); });
-const MarksPage = lazy(function() { return import("./pages/Students/page"); });
+const ReportsPage = lazy(() => import("@/pages/reports/page"));
+const MarksPage = lazy(() => import("./pages/Students/page"));
 
 export default function App() {
   return (
@@ -23,12 +21,12 @@ export default function App() {
 
       <div className="m-4">
         <AppLayout>
-          <Suspense fallback={<div className="p-6 text-center"><Loader /></div>}>
+          <Suspense fallback={<div className="p-6 text-center">Loading page...</div>}>
             <Routes>
               <Route path="/" element={<Navigate to={APP_ROUTES.reports} replace />} />
               <Route path={APP_ROUTES.reports} element={<ReportsPage />} />
               <Route path={APP_ROUTES.marks} element={<MarksPage />} />
-              <Route path="*" element={<div>Not Found</div>} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
         </AppLayout>
