@@ -31,17 +31,25 @@ import StudentsTableFilters from "./StudentTableFilters";
 
 export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps) {
   const del = useDeleteStudent();
-  const {appToast} = useAppToast()
+  const { appToast } = useAppToast();
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [sorting, setSorting] = useState<SortingState>([
     { id: "rollNumber", desc: false },
   ]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500); 
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const searchedData = useMemo(() => {
-    const q = search.trim().toLowerCase();
+    const q = debouncedSearch.trim().toLowerCase();
     if (!q) return data;
 
     return data.filter(
@@ -49,25 +57,26 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
         (r.name ?? "").toLowerCase().includes(q) ||
         (r.class ?? "").toLowerCase().includes(q),
     );
-  }, [data, search]);
+  }, [data, debouncedSearch]);
 
- const handleDelete = (student: Student) => {
-  const ok = confirm(`Delete ${student.name}?`);
-  if (!ok) return;
+  const handleDelete = (student: Student) => {
+    const ok = confirm(`Delete ${student.name}?`);
+    if (!ok) return;
 
-  del.mutate(student.id, {
-    onSuccess: () =>
-      appToast({
-        type: "delete",
-        name: student.name,
-      }),
-    onError: () =>
-      appToast({
-        type: "error",
-        description: `Failed to delete ${student.name}`,
-      }),
-  });
-};
+    del.mutate(student.id, {
+      onSuccess: () =>
+        appToast({
+          type: "delete",
+          name: student.name,
+        }),
+      onError: () =>
+        appToast({
+          type: "error",
+          description: `Failed to delete ${student.name}`,
+        }),
+    });
+  };
+
   const columns = useMemo(
     () =>
       getStudentColumns({
@@ -75,7 +84,7 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
         onDelete: handleDelete,
         deleting: del.isPending,
       }),
-    [onEdit, del.isPending, data, search],
+    [onEdit, del.isPending],
   );
 
   const table = useReactTable({
@@ -93,11 +102,11 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
 
   useEffect(() => {
     setPagination((p) => ({ ...p, pageIndex: 0 }));
-  }, [search, columnFilters]);
+  }, [debouncedSearch, columnFilters]);
 
   return (
     <div className="space-y-4 mx-4 ">
-      <div className="w-full rounded-2xl  bg-white px-1 ">
+      <div className="w-full rounded-2xl bg-white px-1 ">
         <div className="flex flex-col gap-4">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
             <div className="w-full min-w-0 flex-1">
@@ -112,7 +121,6 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
             <StudentsTableFilters table={table} />
 
             <Button
-            
               onClick={onAdd}
               className="h-11 w-full rounded-xl bg-purple-700 px-5 font-medium text-white shadow-sm transition hover:bg-purple-900 sm:w-auto"
             >

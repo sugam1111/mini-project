@@ -5,6 +5,8 @@ import AppLayout from "./components/Layout/layout";
 import { APP_ROUTES } from "./config/routes";
 import { Loader } from "./components/Loader/loader";
 
+
+// normal import = bring now and lazy import means = bring later
 const ReportsPage = lazy(() => import("@/pages/reports/page"));
 const MarksPage = lazy(() => import("./pages/Students/page"));
 

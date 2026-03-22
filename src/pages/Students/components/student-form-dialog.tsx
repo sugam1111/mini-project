@@ -1,15 +1,57 @@
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
 import { Input } from "@/components/ui/input";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
 import { useAppToast } from "@/components/Hooks/Toast";
 import type { StudentFormProps, StudentFormState } from "@/types/types";
-import {
-  buildStudentPayload,
-  hasStudentFormEmptyFields,
-  isStudentFormCompletelyEmpty,
-} from "./students-table/Constant";
+import { buildStudentPayload } from "./students-table/Constant";
+
+type StudentFormErrors = Partial<Record<keyof StudentFormState, string>>;
+
+const studentSchema = z.object({
+  name: z.string().trim().min(1, "Name is required"),
+  rollNumber: z
+    .string()
+    .trim()
+    .min(1, "Roll Number is required")
+    .refine((val) => !isNaN(Number(val)), "Roll Number must be a number"),
+  className: z.string().trim().min(1, "Class is required"),
+  math: z
+    .string()
+    .trim()
+    .min(1, "Math mark is required")
+    .refine((val) => !isNaN(Number(val)), "Math must be a number"),
+  science: z
+    .string()
+    .trim()
+    .min(1, "Science mark is required")
+    .refine((val) => !isNaN(Number(val)), "Science must be a number"),
+  english: z
+    .string()
+    .trim()
+    .min(1, "English mark is required")
+    .refine((val) => !isNaN(Number(val)), "English must be a number"),
+});
+
+const INITIAL_FORM: StudentFormState = {
+  name: "",
+  rollNumber: "",
+  className: "",
+  math: "",
+  science: "",
+  english: "",
+};
+
+const INITIAL_ERRORS: StudentFormErrors = {
+  name: "",
+  rollNumber: "",
+  className: "",
+  math: "",
+  science: "",
+  english: "",
+};
 
 export default function StudentFormDialog({
   open,
@@ -22,14 +64,8 @@ export default function StudentFormDialog({
 
   const isEdit = !!editing;
 
-  const [form, setForm] = useState<StudentFormState>({
-    name: "",
-    rollNumber: "",
-    className: "",
-    math: "",
-    science: "",
-    english: "",
-  });
+  const [form, setForm] = useState<StudentFormState>(INITIAL_FORM);
+  const [errors, setErrors] = useState<StudentFormErrors>(INITIAL_ERRORS);
 
   useEffect(() => {
     if (!open) return;
@@ -44,31 +80,41 @@ export default function StudentFormDialog({
         english: String(editing.marks?.english ?? ""),
       });
     } else {
-      setForm({
-        name: "",
-        rollNumber: "",
-        className: "",
-        math: "",
-        science: "",
-        english: "",
-      });
+      setForm(INITIAL_FORM);
     }
+
+    setErrors(INITIAL_ERRORS);
   }, [open, editing]);
 
   const handleChange = (key: keyof StudentFormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: "" }));
+  };
+
+  const validateForm = () => {
+    const result = studentSchema.safeParse(form);
+
+    if (result.success) {
+      setErrors(INITIAL_ERRORS);
+      return true;
+    }
+
+    const fieldErrors: StudentFormErrors = {};
+
+    result.error.issues.forEach((issue) => {
+      const field = issue.path[0] as keyof StudentFormState;
+      if (!fieldErrors[field]) {
+        fieldErrors[field] = issue.message;
+      }
+    });
+
+    setErrors(fieldErrors);
+    return false;
   };
 
   const handleSave = () => {
-    if (!isEdit && isStudentFormCompletelyEmpty(form)) return;
-
-    if (hasStudentFormEmptyFields(form)) {
-      appToast({
-        type: "error",
-        description: "Please fill out all the fields in the form !!",
-      });
-      return;
-    }
+    const isValid = validateForm();
+    if (!isValid) return;
 
     const student = buildStudentPayload(form, editing);
     const mutation = isEdit ? updateMutation : createMutation;
@@ -106,7 +152,11 @@ export default function StudentFormDialog({
             <Input
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
+              className={errors.name ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.name && (
+              <p className="text-xs font-medium text-red-500">{errors.name}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -115,7 +165,11 @@ export default function StudentFormDialog({
               type="number"
               value={form.rollNumber}
               onChange={(e) => handleChange("rollNumber", e.target.value)}
+              className={errors.rollNumber ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.rollNumber && (
+              <p className="text-xs font-medium text-red-500">{errors.rollNumber}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -123,7 +177,11 @@ export default function StudentFormDialog({
             <Input
               value={form.className}
               onChange={(e) => handleChange("className", e.target.value)}
+              className={errors.className ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.className && (
+              <p className="text-xs font-medium text-red-500">{errors.className}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -132,7 +190,11 @@ export default function StudentFormDialog({
               type="number"
               value={form.math}
               onChange={(e) => handleChange("math", e.target.value)}
+              className={errors.math ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.math && (
+              <p className="text-xs font-medium text-red-500">{errors.math}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -141,7 +203,11 @@ export default function StudentFormDialog({
               type="number"
               value={form.science}
               onChange={(e) => handleChange("science", e.target.value)}
+              className={errors.science ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.science && (
+              <p className="text-xs font-medium text-red-500">{errors.science}</p>
+            )}
           </div>
 
           <div className="space-y-2 sm:col-span-2">
@@ -150,7 +216,11 @@ export default function StudentFormDialog({
               type="number"
               value={form.english}
               onChange={(e) => handleChange("english", e.target.value)}
+              className={errors.english ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
+            {errors.english && (
+              <p className="text-xs font-medium text-red-500">{errors.english}</p>
+            )}
           </div>
         </div>
 
