@@ -10,7 +10,7 @@ type ToastOptions = {
 };
 
 type ToastContentProps = {
-  title: string;
+  name: string;
   description?: string;
   message?: string;
   status: "success" | "error";
@@ -19,34 +19,37 @@ type ToastContentProps = {
 
 const toastConfig = {
   create: {
-    title: "Saved",
+    name: "Saved",
     status: "success" as const,
-    getMessage: function(name?: string) {
-      return name ? `${name} has been saved successfully` : undefined;
-    },
+    getMessage: (name?: string) =>
+      name ? `${name} has been created successfully` : "created successfully",
   },
   update: {
-    title: "Updated",
+    name: "Updated",
     status: "success" as const,
-    getMessage: function(name?: string) {
-      return name ? `${name} has been updated successfully` : undefined;
-    },
+    getMessage: (name?: string) =>
+      name ? `${name} has been updated successfully` : "Updated successfully",
   },
   delete: {
-    title: "Deleted",
+    name: "Deleted",
     status: "success" as const,
-    getMessage: function(name?: string) {
-      return name ? `${name} has been deleted successfully` : undefined;
-    },
+    getMessage: (name?: string) =>
+      name ? `${name} has been deleted successfully` : "Deleted successfully",
   },
   error: {
-    title: "Failed",
+    name: "Failed",
     status: "error" as const,
-    getMessage: function() { return undefined; },
+    getMessage: () => "Something went wrong",
   },
 };
 
-function ToastIcon({ type, status }: { type: ToastType; status: "success" | "error" }) {
+function ToastIcon({
+  type,
+  status,
+}: {
+  type: ToastType;
+  status: "success" | "error";
+}) {
   if (status === "error") {
     return <CircleAlert size={18} />;
   }
@@ -64,7 +67,7 @@ function ToastIcon({ type, status }: { type: ToastType; status: "success" | "err
 }
 
 function ToastContent({
-  title,
+  name,
   description,
   message,
   status,
@@ -98,7 +101,7 @@ function ToastContent({
 
       <div className="flex-1">
         <div className="flex items-center justify-between gap-3">
-          <h4 className="text-sm font-bold text-slate-900">{title}</h4>
+          <h4 className="text-sm font-bold text-slate-900">{name}</h4>
 
           <span
             className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em]
@@ -126,17 +129,15 @@ export function showAppToast({ type, name, description }: ToastOptions) {
   const config = toastConfig[type];
   const message = config.getMessage(name);
 
-  toast.custom(function() {
-    return (
-      <ToastContent
-        title={config.title}
-        description={description}
-        message={message}
-        status={config.status}
-        type={type}
-      />
-    );
-  });
+  toast.custom(() => (
+    <ToastContent
+      name={config.name}
+      description={description}
+      message={message}
+      status={config.status}
+      type={type}
+    />
+  ));
 }
 
 export function useAppToast() {

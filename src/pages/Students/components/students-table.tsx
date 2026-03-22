@@ -41,14 +41,14 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     { id: "rollNumber", desc: false },
   ]);
 
-  useEffect(function() {
-    const timer = setTimeout(function() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
-    return function() { clearTimeout(timer); };
+    return () => clearTimeout(timer);
   }, [search]);
 
-  const searchedData = useMemo(function() {
+  const searchedData = useMemo(() => {
     const q = debouncedSearch.trim().toLowerCase();
     if (!q) return data;
 
@@ -73,20 +73,18 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
       onError: function() {
         appToast({
           type: "error",
-          description: `Failed to delete ${student.name}`,
         });
       },
     });
   }
 
   const columns = useMemo(
-    function() {
-      return getStudentColumns({
+    () =>
+      getStudentColumns({
         onEdit,
         onDelete: handleDelete,
         deleting: del.isPending,
-      });
-    },
+      }),
     [onEdit, del.isPending],
   );
 
@@ -103,8 +101,8 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     onColumnFiltersChange: setColumnFilters,
   });
 
-  useEffect(function() {
-    setPagination(function(p) { return { ...p, pageIndex: 0 }; });
+  useEffect(() => {
+    setPagination((p) => ({ ...p, pageIndex: 0 }));
   }, [debouncedSearch, columnFilters]);
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) { setSearch(e.target.value); }

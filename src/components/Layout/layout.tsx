@@ -23,7 +23,7 @@ export default function AppLayout({ children }: Props) {
         }`}
       >
         <div className="flex items-center justify-between p-4 mt-4">
-          {isOpen && <p className="text-2xl font-bold">Mini Dashboard</p>}
+          {isOpen && <p className="text-2xl font-bold">GRADE-FLOW</p>}
 
           <button
             onClick={function() { setIsOpen(!isOpen); }}

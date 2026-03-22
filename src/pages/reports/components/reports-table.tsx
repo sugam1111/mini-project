@@ -45,15 +45,15 @@ export default function ReportsTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  useEffect(function() {
-    const timer = setTimeout(function() {
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
 
-    return function() { clearTimeout(timer); };
+    return () => clearTimeout(timer);
   }, [search]);
 
-  const filteredReports = useMemo(function() {
+  const filteredReports = useMemo(() => {
     const q = debouncedSearch.trim().toLowerCase();
     if (!q) return data;
 
@@ -68,12 +68,12 @@ export default function ReportsTable({
     );
   }, [data, debouncedSearch]);
 
-  useEffect(function() {
-    setPagination(function(p) { return { ...p, pageIndex: 0 }; });
+  useEffect(() => {
+    setPagination((p) => ({ ...p, pageIndex: 0 }));
   }, [debouncedSearch, columnFilters]);
 
   const handleDelete = useCallback(
-    async function(report: Report) {
+    async (report: Report) => {
       const ok = confirm(`Delete report "${report.title}"?`);
       if (!ok) return;
 
@@ -95,13 +95,12 @@ export default function ReportsTable({
   );
 
   const columns = useMemo(
-    function() {
-      return getReportColumns({
+    () =>
+      getReportColumns({
         onEdit,
         onDelete: handleDelete,
         deleting: del.isPending,
-      });
-    },
+      }),
     [onEdit, handleDelete, del.isPending],
   );
 

@@ -4,22 +4,48 @@ import { Dialog, DialogFooter } from "@/components/dialog/dialog";
 import { Input } from "@/components/ui/input";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
 import { useAppToast } from "@/components/hooks/useToast";
-import type { StudentFormProps, StudentFormState } from "../types";
-import { buildStudentPayload } from "./functionFilter";
-import { studentSchema } from "../validator";
+import type { Student, StudentFormProps, StudentFormState } from "../types";
 
-type StudentFormErrors = Partial<Record<keyof StudentFormState, string>>;
-
-const INITIAL_FORM: StudentFormState = {
-  name: "",
-  rollNumber: "",
-  className: "",
-  math: "",
-  science: "",
-  english: "",
+const isStudentFormCompletelyEmpty = (form: StudentFormState): boolean => {
+  return (
+    !form.name.trim() &&
+    !form.rollNumber.trim() &&
+    !form.className.trim() &&
+    !form.math.trim() &&
+    !form.science.trim() &&
+    !form.english.trim()
+  );
 };
 
-const INITIAL_ERRORS: StudentFormErrors = {
+const hasStudentFormEmptyFields = (form: StudentFormState): boolean => {
+  return (
+    !form.name.trim() ||
+    !form.rollNumber.trim() ||
+    !form.className.trim() ||
+    !form.math.trim() ||
+    !form.science.trim() ||
+    !form.english.trim()
+  );
+};
+
+const buildStudentPayload = (
+  form: StudentFormState,
+  editing?: Student | null,
+): Student => {
+  return {
+    id: editing?.id ?? crypto.randomUUID(),
+    name: form.name.trim(),
+    rollNumber: Number(form.rollNumber.trim()),
+    class: form.className.trim(),
+    marks: {
+      math: Number(form.math.trim()),
+      science: Number(form.science.trim()),
+      english: Number(form.english.trim()),
+    },
+  };
+};
+
+const INITIAL_FORM: StudentFormState = {
   name: "",
   rollNumber: "",
   className: "",
@@ -40,9 +66,8 @@ export default function StudentFormDialog({
   const isEdit = !!editing;
 
   const [form, setForm] = useState<StudentFormState>(INITIAL_FORM);
-  const [errors, setErrors] = useState<StudentFormErrors>(INITIAL_ERRORS);
 
-  useEffect(function() {
+  useEffect(() => {
     if (!open) return;
 
     if (editing) {
@@ -57,39 +82,22 @@ export default function StudentFormDialog({
     } else {
       setForm(INITIAL_FORM);
     }
-
-    setErrors(INITIAL_ERRORS);
   }, [open, editing]);
 
-  function handleChange(key: keyof StudentFormState, value: string) {
+  const handleChange = (key: keyof StudentFormState, value: string) => {
     setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => ({ ...prev, [key]: "" }));
-  }
+  };
 
-  function validateForm() {
-    const result = studentSchema.safeParse(form);
+  const handleSave = () => {
+    if (!isEdit && isStudentFormCompletelyEmpty(form)) return;
 
-    if (result.success) {
-      setErrors(INITIAL_ERRORS);
-      return true;
+    if (hasStudentFormEmptyFields(form)) {
+      appToast({
+        type: "error",
+        description: "Please fill out all the fields in the form",
+      });
+      return;
     }
-
-    const fieldErrors: StudentFormErrors = {};
-
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0] as keyof StudentFormState;
-      if (!fieldErrors[field]) {
-        fieldErrors[field] = issue.message;
-      }
-    });
-
-    setErrors(fieldErrors);
-    return false;
-  }
-
-  function handleSave() {
-    const isValid = validateForm();
-    if (!isValid) return;
 
     const student = buildStudentPayload(form, editing);
     const mutation = isEdit ? updateMutation : createMutation;
@@ -105,25 +113,10 @@ export default function StudentFormDialog({
       onError: () => {
         appToast({
           type: "error",
-          description: "Something went wrong",
         });
       },
     });
-  }
-
-  function close() { onOpenChange(false); }
-
-  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("name", e.target.value); }
-
-  function handleRollNumberChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("rollNumber", e.target.value); }
-
-  function handleClassNameChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("className", e.target.value); }
-
-  function handleMathChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("math", e.target.value); }
-
-  function handleScienceChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("science", e.target.value); }
-
-  function handleEnglishChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("english", e.target.value); }
+  };
 
   const saving = createMutation.isPending || updateMutation.isPending;
 
@@ -140,12 +133,8 @@ export default function StudentFormDialog({
             <label className="text-sm font-medium">Name</label>
             <Input
               value={form.name}
-              onChange={handleNameChange}
-              className={errors.name ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("name", e.target.value)}
             />
-            {errors.name && (
-              <p className="text-xs font-medium text-red-500">{errors.name}</p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -153,24 +142,16 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.rollNumber}
-              onChange={handleRollNumberChange}
-              className={errors.rollNumber ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("rollNumber", e.target.value)}
             />
-            {errors.rollNumber && (
-              <p className="text-xs font-medium text-red-500">{errors.rollNumber}</p>
-            )}
           </div>
 
           <div className="space-y-2">
             <label className="text-sm font-medium">Class</label>
             <Input
               value={form.className}
-              onChange={handleClassNameChange}
-              className={errors.className ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("className", e.target.value)}
             />
-            {errors.className && (
-              <p className="text-xs font-medium text-red-500">{errors.className}</p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -178,12 +159,8 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.math}
-              onChange={handleMathChange}
-              className={errors.math ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("math", e.target.value)}
             />
-            {errors.math && (
-              <p className="text-xs font-medium text-red-500">{errors.math}</p>
-            )}
           </div>
 
           <div className="space-y-2">
@@ -191,12 +168,8 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.science}
-              onChange={handleScienceChange}
-              className={errors.science ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("science", e.target.value)}
             />
-            {errors.science && (
-              <p className="text-xs font-medium text-red-500">{errors.science}</p>
-            )}
           </div>
 
           <div className="space-y-2 sm:col-span-2">
@@ -204,12 +177,8 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.english}
-              onChange={handleEnglishChange}
-              className={errors.english ? "border-red-500 focus-visible:ring-red-300" : ""}
+              onChange={(e) => handleChange("english", e.target.value)}
             />
-            {errors.english && (
-              <p className="text-xs font-medium text-red-500">{errors.english}</p>
-            )}
           </div>
         </div>
 
@@ -217,7 +186,7 @@ export default function StudentFormDialog({
           <Button
             className="bg-red-500 hover:bg-red-700"
             variant="outline"
-            onClick={close}
+            onClick={() => onOpenChange(false)}
           >
             Cancel
           </Button>

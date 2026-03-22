@@ -1,4 +1,4 @@
-import type { Student, StudentFormState } from "../types";
+import type { Student, StudentFormState } from "../../types";
 
 export const isStudentFormCompletelyEmpty = (form: StudentFormState) => {
   return (
