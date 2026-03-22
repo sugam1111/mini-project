@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import ColumnFilter from "@/pages/Students/components/ColumnFilter";
-import type { Student } from "@/types/types";
+import ColumnFilter from "@/pages/Students/components/columnFilter";
 import type { Table } from "@tanstack/react-table";
 import { Filter } from "lucide-react";
 import { useState } from "react";
+import type { Student } from "../types";
 
 export default function StudentsTableFilters({
   table,
@@ -21,7 +21,7 @@ export default function StudentsTableFilters({
       <Button
         type="button"
         className="h-11 rounded-xl bg-blue-900 px-4 text-white hover:bg-slate-800"
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={function() { setOpen(function(prev) { return !prev; }); }}
       >
         <Filter className="mr-2 h-4 w-4" />
         Filters

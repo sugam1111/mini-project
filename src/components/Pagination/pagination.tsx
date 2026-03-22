@@ -16,7 +16,7 @@ export default function SimplePagination({ table }: Props) {
     <div className="flex items-center justify-center gap-3 py-4 border-t">
       <button
         className="h-8 w-8 rounded-full border flex items-center justify-center disabled:opacity-50"
-        onClick={() => table.previousPage()}
+        onClick={function() { table.previousPage(); }}
         disabled={!table.getCanPreviousPage()}
       >
         ‹
@@ -30,7 +30,7 @@ export default function SimplePagination({ table }: Props) {
 
       <button
         className="h-8 w-8 rounded-full border flex items-center justify-center disabled:opacity-50"
-        onClick={() => table.nextPage()}
+        onClick={function() { table.nextPage(); }}
         disabled={!table.getCanNextPage()}
       >
         ›

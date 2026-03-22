@@ -21,25 +21,28 @@ const toastConfig = {
   create: {
     title: "Saved",
     status: "success" as const,
-    getMessage: (name?: string) =>
-      name ? `${name} has been saved successfully` : undefined,
+    getMessage: function(name?: string) {
+      return name ? `${name} has been saved successfully` : undefined;
+    },
   },
   update: {
     title: "Updated",
     status: "success" as const,
-    getMessage: (name?: string) =>
-      name ? `${name} has been updated successfully` : undefined,
+    getMessage: function(name?: string) {
+      return name ? `${name} has been updated successfully` : undefined;
+    },
   },
   delete: {
     title: "Deleted",
     status: "success" as const,
-    getMessage: (name?: string) =>
-      name ? `${name} has been deleted successfully` : undefined,
+    getMessage: function(name?: string) {
+      return name ? `${name} has been deleted successfully` : undefined;
+    },
   },
   error: {
     title: "Failed",
     status: "error" as const,
-    getMessage: () => undefined,
+    getMessage: function() { return undefined; },
   },
 };
 
@@ -123,15 +126,17 @@ export function showAppToast({ type, name, description }: ToastOptions) {
   const config = toastConfig[type];
   const message = config.getMessage(name);
 
-  toast.custom(() => (
-    <ToastContent
-      title={config.title}
-      description={description}
-      message={message}
-      status={config.status}
-      type={type}
-    />
-  ));
+  toast.custom(function() {
+    return (
+      <ToastContent
+        title={config.title}
+        description={description}
+        message={message}
+        status={config.status}
+        type={type}
+      />
+    );
+  });
 }
 
 export function useAppToast() {

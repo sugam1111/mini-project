@@ -1,39 +1,14 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
+import { Dialog, DialogFooter } from "@/components/dialog/dialog";
 import { Input } from "@/components/ui/input";
 import { useCreateStudent, useUpdateStudent } from "../hooks/use-students";
-import { useAppToast } from "@/components/Hooks/Toast";
-import type { StudentFormProps, StudentFormState } from "@/types/types";
-import { buildStudentPayload } from "./students-table/Constant";
+import { useAppToast } from "@/components/hooks/useToast";
+import type { StudentFormProps, StudentFormState } from "../types";
+import { buildStudentPayload } from "./functionFilter";
+import { studentSchema } from "../validator";
 
 type StudentFormErrors = Partial<Record<keyof StudentFormState, string>>;
-
-const studentSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
-  rollNumber: z
-    .string()
-    .trim()
-    .min(1, "Roll Number is required")
-    .refine((val) => !isNaN(Number(val)), "Roll Number must be a number"),
-  className: z.string().trim().min(1, "Class is required"),
-  math: z
-    .string()
-    .trim()
-    .min(1, "Math mark is required")
-    .refine((val) => !isNaN(Number(val)), "Math must be a number"),
-  science: z
-    .string()
-    .trim()
-    .min(1, "Science mark is required")
-    .refine((val) => !isNaN(Number(val)), "Science must be a number"),
-  english: z
-    .string()
-    .trim()
-    .min(1, "English mark is required")
-    .refine((val) => !isNaN(Number(val)), "English must be a number"),
-});
 
 const INITIAL_FORM: StudentFormState = {
   name: "",
@@ -67,7 +42,7 @@ export default function StudentFormDialog({
   const [form, setForm] = useState<StudentFormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<StudentFormErrors>(INITIAL_ERRORS);
 
-  useEffect(() => {
+  useEffect(function() {
     if (!open) return;
 
     if (editing) {
@@ -86,12 +61,12 @@ export default function StudentFormDialog({
     setErrors(INITIAL_ERRORS);
   }, [open, editing]);
 
-  const handleChange = (key: keyof StudentFormState, value: string) => {
+  function handleChange(key: keyof StudentFormState, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: "" }));
-  };
+  }
 
-  const validateForm = () => {
+  function validateForm() {
     const result = studentSchema.safeParse(form);
 
     if (result.success) {
@@ -110,9 +85,9 @@ export default function StudentFormDialog({
 
     setErrors(fieldErrors);
     return false;
-  };
+  }
 
-  const handleSave = () => {
+  function handleSave() {
     const isValid = validateForm();
     if (!isValid) return;
 
@@ -134,7 +109,21 @@ export default function StudentFormDialog({
         });
       },
     });
-  };
+  }
+
+  function close() { onOpenChange(false); }
+
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("name", e.target.value); }
+
+  function handleRollNumberChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("rollNumber", e.target.value); }
+
+  function handleClassNameChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("className", e.target.value); }
+
+  function handleMathChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("math", e.target.value); }
+
+  function handleScienceChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("science", e.target.value); }
+
+  function handleEnglishChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("english", e.target.value); }
 
   const saving = createMutation.isPending || updateMutation.isPending;
 
@@ -151,7 +140,7 @@ export default function StudentFormDialog({
             <label className="text-sm font-medium">Name</label>
             <Input
               value={form.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              onChange={handleNameChange}
               className={errors.name ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.name && (
@@ -164,7 +153,7 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.rollNumber}
-              onChange={(e) => handleChange("rollNumber", e.target.value)}
+              onChange={handleRollNumberChange}
               className={errors.rollNumber ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.rollNumber && (
@@ -176,7 +165,7 @@ export default function StudentFormDialog({
             <label className="text-sm font-medium">Class</label>
             <Input
               value={form.className}
-              onChange={(e) => handleChange("className", e.target.value)}
+              onChange={handleClassNameChange}
               className={errors.className ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.className && (
@@ -189,7 +178,7 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.math}
-              onChange={(e) => handleChange("math", e.target.value)}
+              onChange={handleMathChange}
               className={errors.math ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.math && (
@@ -202,7 +191,7 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.science}
-              onChange={(e) => handleChange("science", e.target.value)}
+              onChange={handleScienceChange}
               className={errors.science ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.science && (
@@ -215,7 +204,7 @@ export default function StudentFormDialog({
             <Input
               type="number"
               value={form.english}
-              onChange={(e) => handleChange("english", e.target.value)}
+              onChange={handleEnglishChange}
               className={errors.english ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.english && (
@@ -228,7 +217,7 @@ export default function StudentFormDialog({
           <Button
             className="bg-red-500 hover:bg-red-700"
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={close}
           >
             Cancel
           </Button>

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogFooter } from "@/components/Dialog/dialog";
+import { Dialog, DialogFooter } from "@/components/dialog/dialog";
 import { Input } from "@/components/ui/input";
-import type { Report, ReportDialog } from "@/types/types";
+import type { Report, ReportDialog } from "@/pages/reports/types";
 import { useCreateReport, useUpdateReport } from "../hooks/use-reports";
-import { useAppToast } from "@/components/Hooks/Toast";
+import { useAppToast } from "@/components/hooks/useToast";
+import { reportSchema } from "../validator";
 
 type ReportFormState = {
   title: string;
@@ -17,15 +17,6 @@ type ReportFormState = {
 };
 
 type ReportFormErrors = Partial<Record<keyof ReportFormState, string>>;
-
-const reportSchema = z.object({
-  title: z.string().trim().min(1, "Title is required"),
-  createdBy: z.string().trim().min(1, "Created By is required"),
-  status: z.enum(["Draft", "Published", "Archived"]),
-  remarks: z.string().trim().min(1, "Remarks is required"),
-  studentName: z.string().trim().min(1, "Student Name is required"),
-  studentClass: z.string().trim().min(1, "Student Class is required"),
-});
 
 const INITIAL_FORM: ReportFormState = {
   title: "",
@@ -59,7 +50,7 @@ export default function ReportFormDialog({
   const [form, setForm] = useState<ReportFormState>(INITIAL_FORM);
   const [errors, setErrors] = useState<ReportFormErrors>(INITIAL_ERRORS);
 
-  useEffect(() => {
+  useEffect(function() {
     if (!open) return;
 
     if (editing) {
@@ -78,12 +69,12 @@ export default function ReportFormDialog({
     setErrors(INITIAL_ERRORS);
   }, [open, editing]);
 
-  const handleChange = (key: keyof ReportFormState, value: string) => {
+  function handleChange(key: keyof ReportFormState, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: "" }));
-  };
+  }
 
-  const validateForm = () => {
+  function validateForm() {
     const result = reportSchema.safeParse(form);
 
     if (result.success) {
@@ -102,9 +93,9 @@ export default function ReportFormDialog({
 
     setErrors(fieldErrors);
     return false;
-  };
+  }
 
-  const handleSave = () => {
+  function handleSave() {
     const isValid = validateForm();
     if (!isValid) return;
 
@@ -145,11 +136,23 @@ export default function ReportFormDialog({
         });
       },
     });
-  };
+  }
 
   const saving = createMutation.isPending || updateMutation.isPending;
 
-  const close = () => onOpenChange(false);
+  function close() { onOpenChange(false); }
+
+  function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("title", e.target.value); }
+
+  function handleCreatedByChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("createdBy", e.target.value); }
+
+  function handleRemarksChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("remarks", e.target.value); }
+
+  function handleStudentNameChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("studentName", e.target.value); }
+
+  function handleStudentClassChange(e: React.ChangeEvent<HTMLInputElement>) { handleChange("studentClass", e.target.value); }
+
+  function handleStatusChange(e: React.ChangeEvent<HTMLSelectElement>) { handleChange("status", e.target.value as Report["status"]); }
 
   return (
     <Dialog
@@ -164,7 +167,7 @@ export default function ReportFormDialog({
             <label className="text-sm font-medium">Title</label>
             <Input
               value={form.title}
-              onChange={(e) => handleChange("title", e.target.value)}
+              onChange={handleTitleChange}
               className={errors.title ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.title && (
@@ -176,7 +179,7 @@ export default function ReportFormDialog({
             <label className="text-sm font-medium">Created By</label>
             <Input
               value={form.createdBy}
-              onChange={(e) => handleChange("createdBy", e.target.value)}
+              onChange={handleCreatedByChange}
               className={errors.createdBy ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.createdBy && (
@@ -191,9 +194,7 @@ export default function ReportFormDialog({
                 errors.status ? "border-red-500 focus-visible:ring-red-300" : ""
               }`}
               value={form.status}
-              onChange={(e) =>
-                handleChange("status", e.target.value as Report["status"])
-              }
+              onChange={handleStatusChange}
             >
               <option value="Draft">Draft</option>
               <option value="Published">Published</option>
@@ -208,7 +209,7 @@ export default function ReportFormDialog({
             <label className="text-sm font-medium">Remarks</label>
             <Input
               value={form.remarks}
-              onChange={(e) => handleChange("remarks", e.target.value)}
+              onChange={handleRemarksChange}
               className={errors.remarks ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.remarks && (
@@ -220,7 +221,7 @@ export default function ReportFormDialog({
             <label className="text-sm font-medium">Student Name</label>
             <Input
               value={form.studentName}
-              onChange={(e) => handleChange("studentName", e.target.value)}
+              onChange={handleStudentNameChange}
               className={errors.studentName ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.studentName && (
@@ -232,7 +233,7 @@ export default function ReportFormDialog({
             <label className="text-sm font-medium">Student Class</label>
             <Input
               value={form.studentClass}
-              onChange={(e) => handleChange("studentClass", e.target.value)}
+              onChange={handleStudentClassChange}
               className={errors.studentClass ? "border-red-500 focus-visible:ring-red-300" : ""}
             />
             {errors.studentClass && (

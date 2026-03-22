@@ -26,7 +26,7 @@ export default function AppLayout({ children }: Props) {
           {isOpen && <p className="text-2xl font-bold">Mini Dashboard</p>}
 
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={function() { setIsOpen(!isOpen); }}
             className="rounded-md px-2 py-1 text-sm hover:bg-muted"
           >
             {isOpen ? <Menu /> : <Menu />}
@@ -38,15 +38,15 @@ export default function AppLayout({ children }: Props) {
             <NavLink
               key={item.to}
               to={item.to}
-              className={({ isActive }) =>
-                [
+              className={function({ isActive }) {
+                return [
                   "rounded-md text-sm transition",
                   isOpen
                     ? "block px-3 py-2 text-left"
                     : "flex h-10 w-10 items-center justify-center mx-auto",
                   isActive ? "bg-purple-600 text-white font-medium" : "hover:bg-purple-900 font-bold hover:text-white",
-                ].join(" ")
-              }
+                ].join(" ");
+              }}
             >
               {isOpen ? item.label : item.label[0]}
             </NavLink>

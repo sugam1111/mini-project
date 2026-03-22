@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { Report } from "@/types/types";
+import type { Report } from "@/pages/reports/types";
 import ReportFormDialog from "./components/report-form-dialog";
 import { useReportsQuery } from "./hooks/use-reports";
 import ReportsTable from "./components/reports-table";

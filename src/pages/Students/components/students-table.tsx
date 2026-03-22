@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
-import SimplePagination from "@/components/Pagination/pagination";
+import SimplePagination from "@/components/pagination/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -21,12 +21,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getStudentColumns } from "./students-table/columns";
 
-import { useAppToast } from "@/components/Hooks/Toast";
+import { useAppToast } from "@/components/hooks/useToast";
 import { Button } from "@/components/ui/button";
-import type { Student, StudentTableProps } from "@/types/types";
 import { useDeleteStudent } from "../hooks/use-students";
+import type { Student, StudentTableProps } from "../types";
+import { getStudentColumns } from "./columns";
 import StudentsTableFilters from "./StudentTableFilters";
 
 export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps) {
@@ -41,14 +41,14 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     { id: "rollNumber", desc: false },
   ]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  useEffect(function() {
+    const timer = setTimeout(function() {
       setDebouncedSearch(search);
-    }, 500); 
-    return () => clearTimeout(timer);
+    }, 500);
+    return function() { clearTimeout(timer); };
   }, [search]);
 
-  const searchedData = useMemo(() => {
+  const searchedData = useMemo(function() {
     const q = debouncedSearch.trim().toLowerCase();
     if (!q) return data;
 
@@ -59,31 +59,34 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     );
   }, [data, debouncedSearch]);
 
-  const handleDelete = (student: Student) => {
+  function handleDelete(student: Student) {
     const ok = confirm(`Delete ${student.name}?`);
     if (!ok) return;
 
     del.mutate(student.id, {
-      onSuccess: () =>
+      onSuccess: function() {
         appToast({
           type: "delete",
           name: student.name,
-        }),
-      onError: () =>
+        });
+      },
+      onError: function() {
         appToast({
           type: "error",
           description: `Failed to delete ${student.name}`,
-        }),
+        });
+      },
     });
-  };
+  }
 
   const columns = useMemo(
-    () =>
-      getStudentColumns({
+    function() {
+      return getStudentColumns({
         onEdit,
         onDelete: handleDelete,
         deleting: del.isPending,
-      }),
+      });
+    },
     [onEdit, del.isPending],
   );
 
@@ -100,9 +103,11 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
     onColumnFiltersChange: setColumnFilters,
   });
 
-  useEffect(() => {
-    setPagination((p) => ({ ...p, pageIndex: 0 }));
+  useEffect(function() {
+    setPagination(function(p) { return { ...p, pageIndex: 0 }; });
   }, [debouncedSearch, columnFilters]);
+
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) { setSearch(e.target.value); }
 
   return (
     <div className="space-y-4 mx-4 ">
@@ -114,7 +119,7 @@ export default function StudentsTable({ data, onEdit, onAdd }: StudentTableProps
                 className="h-11 w-full rounded-xl border-slate-200 bg-slate-50 px-4 text-slate-700 shadow-sm transition placeholder:text-slate-400 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-slate-300"
                 placeholder="Search by name or class..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
 

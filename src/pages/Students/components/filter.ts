@@ -1,5 +1,5 @@
 import type { FilterFn } from "@tanstack/react-table";
-import type { Student } from "@/types/student";
+import type { Student } from "../types";
 
 export function parseRangeText(
   input: string,

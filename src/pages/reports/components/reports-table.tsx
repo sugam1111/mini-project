@@ -1,4 +1,4 @@
-import type { Report, ReportTableTypes } from "@/types/types";
+import type { Report, ReportTableTypes } from "@/pages/reports/types";
 import {
   flexRender,
   getCoreRowModel,
@@ -11,7 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import SimplePagination from "@/components/Pagination/pagination";
+import SimplePagination from "@/components/pagination/pagination";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -24,9 +24,9 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { getReportColumns } from "./columns";
-import ReportsTableFilters from "./ReportsTableFilters";
 import { useDeleteReport } from "../hooks/use-reports";
-import { useAppToast } from "@/components/Hooks/Toast";
+import { useAppToast } from "@/components/hooks/useToast";
+import ReportsTableFilters from "./reportsTableFilters";
 
 export default function ReportsTable({
   data,
@@ -37,6 +37,7 @@ export default function ReportsTable({
   const { appToast } = useAppToast();
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -44,8 +45,16 @@ export default function ReportsTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  const filteredReports = useMemo(() => {
-    const q = search.trim().toLowerCase();
+  useEffect(function() {
+    const timer = setTimeout(function() {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return function() { clearTimeout(timer); };
+  }, [search]);
+
+  const filteredReports = useMemo(function() {
+    const q = debouncedSearch.trim().toLowerCase();
     if (!q) return data;
 
     return data.filter(
@@ -57,14 +66,14 @@ export default function ReportsTable({
         (r.student?.name ?? "").toLowerCase().includes(q) ||
         (r.student?.class ?? "").toLowerCase().includes(q),
     );
-  }, [data, search]);
+  }, [data, debouncedSearch]);
 
-  useEffect(() => {
-    setPagination((p) => ({ ...p, pageIndex: 0 }));
-  }, [search, columnFilters]);
+  useEffect(function() {
+    setPagination(function(p) { return { ...p, pageIndex: 0 }; });
+  }, [debouncedSearch, columnFilters]);
 
   const handleDelete = useCallback(
-    async (report: Report) => {
+    async function(report: Report) {
       const ok = confirm(`Delete report "${report.title}"?`);
       if (!ok) return;
 
@@ -86,12 +95,13 @@ export default function ReportsTable({
   );
 
   const columns = useMemo(
-    () =>
-      getReportColumns({
+    function() {
+      return getReportColumns({
         onEdit,
         onDelete: handleDelete,
         deleting: del.isPending,
-      }),
+      });
+    },
     [onEdit, handleDelete, del.isPending],
   );
 
@@ -108,6 +118,8 @@ export default function ReportsTable({
     onSortingChange: setSorting,
   });
 
+  function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) { setSearch(e.target.value); }
+
   return (
     <div className="mx-4 overflow-x-hidden md:max-w-200 lg:max-w-full">
       <div className="w-full min-w-0 space-y-3">
@@ -118,7 +130,7 @@ export default function ReportsTable({
                 className="h-10 w-full min-w-0 flex-1 rounded-xl border-slate-200 bg-slate-50 px-3 text-sm text-slate-700 shadow-sm transition placeholder:text-slate-400 focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-slate-300 sm:h-11 sm:px-4"
                 placeholder="Search by title, student, status..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={handleSearchChange}
               />
 
               <div className="min-w-0 rounded-xl p-2">

@@ -1,4 +1,4 @@
-import type { Student } from "@/types/types";
+import type { Student } from "@/pages/reports/types";
 import axios from "axios";
 
 const STUDENT_API = import.meta.env.VITE_STUDENTS_API;

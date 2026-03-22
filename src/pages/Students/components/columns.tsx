@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { rangeTextNumber } from "./filter";
 import { Button } from "@/components/ui/button";
-import type { Student } from "@/types/types";
+import { rangeTextNumber } from "./filter";
+import type { Student } from "../types";
 
 export function getStudentColumns(params: {
   onEdit: (s: Student) => void;
@@ -20,20 +20,20 @@ export function getStudentColumns(params: {
     {
       header: "Math",
       id: "math",
-      accessorFn: (row) => row.marks?.math,
+      accessorFn: function(row) { return row.marks?.math; },
       
       filterFn: rangeTextNumber,
     },
     {
       header: "Science",
       id: "science",
-      accessorFn: (row) => row.marks?.science,
+      accessorFn: function(row) { return row.marks?.science; },
       filterFn: rangeTextNumber,
     },
     {
       header: "English",
       id: "english",
-      accessorFn: (row) => row.marks?.english,
+      accessorFn: function(row) { return row.marks?.english; },
       filterFn: rangeTextNumber,
     },
 
@@ -42,18 +42,18 @@ export function getStudentColumns(params: {
       header: "Actions",
       enableSorting: false,
       enableColumnFilter: false,
-      cell: ({ row }) => {
+      cell: function({ row }) {
         const student = row.original;
         return (
           <div className="flex gap-2 whitespace-nowrap ">
-            <Button className="bg-blue-900 text-white" size="sm" variant="outline" onClick={() => onEdit(student)}>
+            <Button className="bg-blue-900 text-white" size="sm" variant="outline" onClick={function() { onEdit(student); }}>
               Edit
             </Button>
             <Button
               size="sm"
               variant="destructive"
               disabled={!!deleting}
-              onClick={() => onDelete(student)}
+              onClick={function() { onDelete(student); }}
             >
               Delete
             </Button>

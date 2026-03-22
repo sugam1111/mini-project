@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import type { ColumnFilterTypo } from "@/types/types";
+import type { ColumnFilterTypo } from "@/pages/reports/types";
 
 export default function ColumnFilter<T>({
   column,
@@ -35,7 +35,7 @@ export default function ColumnFilter<T>({
         <select
           className="h-8 w-full rounded-md border bg-background px-2 text-sm"
           value={String(filterValue ?? "")}
-          onChange={(e) => column.setFilterValue(e.target.value || undefined)}
+          onChange={function(e) { column.setFilterValue(e.target.value || undefined); }}
         >
           <option value="">All</option>
           {options.map((v) => (
@@ -56,7 +56,7 @@ export default function ColumnFilter<T>({
           isRangeTextNumberColumn ? "e.g. 1-5, 10-, -50, 7" : "Filter..."
         }
         value={String(filterValue ?? "")}
-        onChange={(e) => column.setFilterValue(e.target.value)}
+        onChange={function(e) { column.setFilterValue(e.target.value); }}
       />
     </div>
   );

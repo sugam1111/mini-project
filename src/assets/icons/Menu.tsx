@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Menu = () => {
+function Menu() {
   return (
   <div className="w-6 h-6 text-gray-700">
   <svg
